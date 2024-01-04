@@ -990,7 +990,10 @@ SWITCH_DECLARE(void) switch_core_media_parse_rtp_bugs(switch_rtp_bug_flag_t *fla
 	}
 
 	if (switch_stristr("ACCEPT_ANY_PAYLOAD", str)) {
+		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_DEBUG1, "RTP_BUG_ACCEPT_ANY_PAYLOAD enabled \n");
 		*flag_pole |= RTP_BUG_ACCEPT_ANY_PAYLOAD;
+	} else {
+		switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_DEBUG1, "RTP_BUG_ACCEPT_ANY_PAYLOAD not enabled \n");
 	}
 
 	if (switch_stristr("~ACCEPT_ANY_PAYLOAD", str)) {
@@ -6219,6 +6222,14 @@ SWITCH_DECLARE(uint8_t) switch_core_media_negotiate_sdp(switch_core_session_t *s
 																			matches[j].imp->microseconds_per_packet / 1000,
 																			matches[j].imp->number_of_channels,
 																			SWITCH_TRUE);
+
+switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_DEBUG1,
+									  "try add pmap: %d map->rm_encoding: %s imp->modname: %s map->rm_pt: %d pmap->pt:%d\n",
+									  j,
+									  matches[j].map->rm_encoding,
+									  matches[j].imp->modname,
+									  matches[j].map->rm_pt,
+									  pmap->pt);
 
 					if (j == 0) {
 						v_engine->cur_payload_map = pmap;

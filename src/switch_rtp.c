@@ -5609,7 +5609,7 @@ static int check_recv_payload(switch_rtp_t *rtp_session)
 {
 	int ok = 1;
 
-	if (!(rtp_session->rtp_bugs & RTP_BUG_ACCEPT_ANY_PAYLOAD) && rtp_session->pmaps && *rtp_session->pmaps) {
+	if (0 && !(rtp_session->rtp_bugs & RTP_BUG_ACCEPT_ANY_PAYLOAD) && rtp_session->pmaps && *rtp_session->pmaps) {
 		payload_map_t *pmap;
 		ok = 0;
 
@@ -5789,13 +5789,17 @@ static switch_status_t read_rtp_packet(switch_rtp_t *rtp_session, switch_size_t 
 				int accept_packet = 1;
 
 
-				if (!(rtp_session->rtp_bugs & RTP_BUG_ACCEPT_ANY_PAYLOAD) && 
+				if (0 && !(rtp_session->rtp_bugs & RTP_BUG_ACCEPT_ANY_PAYLOAD) && 
 					!(rtp_session->rtp_bugs & RTP_BUG_ACCEPT_ANY_PACKETS) && rtp_session->pmaps && *rtp_session->pmaps) {
 					payload_map_t *pmap;
 					accept_packet = 0;
 
 					switch_mutex_lock(rtp_session->flag_mutex);
 					for (pmap = *rtp_session->pmaps; pmap && pmap->allocated; pmap = pmap->next) {
+
+						switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(rtp_session->session), SWITCH_LOG_DEBUG1,
+									  "READ Packet bugs: %d SEQ: %d TS: %d PT:%d negotiated:%d pmap.iananame: %s recv_pt: %d pt: %d\n",
+									  rtp_session->rtp_bugs, ntohs(rtp_session->recv_msg.header.seq), ntohl(rtp_session->last_rtp_hdr.ts), rtp_session->last_rtp_hdr.pt, pmap->negotiated, pmap->iananame, pmap->recv_pt, pmap->pt);
 
 						if (!pmap->negotiated) {
 							continue;
